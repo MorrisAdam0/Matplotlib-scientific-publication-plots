@@ -1,39 +1,36 @@
-import matplotlib.pyplot as plt
+import tkinter as tk
+from tkinter import filedialog
 import pandas as pd
+import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
+import os
 
-# Load the data from CSV file
-data = pd.read_csv('../data/20230220_Cd_UPD_02_00.csv')
+# Function to select files
+def select_files():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    file_paths = filedialog.askopenfilenames(filetypes=[("CSV files", "*.csv")])
+    return list(file_paths)
 
-data_2 = pd.read_csv('../data/20230120_Cd_UPD_02_-02.csv')
-data_3 = pd.read_csv('../data/20230120_Cd_UPD_02_-04.csv')
-data_4 = pd.read_csv('../data/20230120_Cd_UPD_02_-06.csv')
-data_5 = pd.read_csv('../data/20230120_Cd_UPD_02_-08.csv')
-data_6 = pd.read_csv('../data/20230120_Cd_UPD_02_-1.csv')
-data_7 = pd.read_csv('../data/20230120_S_UPD_00.csv')
-
+# Read selected files
+file_paths = select_files()
+data_frames = [pd.read_csv(file) for file in file_paths]
 
 # Create a new figure and axis
 fig, ax = plt.subplots()
 
-# Plot your data
-ax.plot(data['E/V'], data['I/uA'], color='black')
-
-ax.plot(data_2['E/V'], data_2['I/uA'], color='orange')
-
-ax.plot(data_3['E/V'], data_3['I/uA'], color='purple')
-ax.plot(data_4['E/V'], data_4['I/uA'], color='blue')
-ax.plot(data_5['E/V'], data_5['I/uA'], color='green')
-ax.plot(data_6['E/V'], data_6['I/uA'], color='red')
-'''
-ax.plot(data_7['E/V'], data_7['I/uA'], color='black')
-'''
+# Plot data from each file
+colors = ['blue', 'black', 'red', 'green', 'purple', 'orange']  # Extend this list as needed
+for i, (file_path, data) in enumerate(zip(file_paths, data_frames)):
+    color = colors[i % len(colors)]  # Cycle through colors
+    label = os.path.basename(file_path)  # Use file name as label
+    ax.plot(data['E/V'], data['I/uA'], color=color, label=label)
 
 # Set the black border and increase the thickness
 border_width = 2
 ax.spines['bottom'].set_color('black')
 ax.spines['bottom'].set_linewidth(border_width)
-ax.spines['top'].set_color('black')
+ax.spines['top']. set_color('black')
 ax.spines['top'].set_linewidth(border_width)
 ax.spines['left'].set_color('black')
 ax.spines['left'].set_linewidth(border_width)
@@ -49,11 +46,14 @@ ax.xaxis.set_minor_locator(AutoMinorLocator())
 ax.yaxis.set_minor_locator(AutoMinorLocator())
 
 # Set labels and title
-ax.set_xlabel('Potential (V vs. Ag/AgCl)', fontsize=14, fontname='Times New Roman')
-ax.set_ylabel('Current density (\u03BCA cm\u00b2)', fontsize=14, fontname='Times New Roman')
+ax.set_xlabel('Potential (V)', fontsize=14, fontname='Times New Roman')
+ax.set_ylabel('Current (\u03BCA)', fontsize=14, fontname='Times New Roman')
+ax.legend()
 
+'''
 # Save the plot as a high-resolution JPEG
-plt.savefig('Cd_CV_Au_2.jpg', dpi=1500)
+plt.savefig('../Ru_I_Time', dpi=500)
+'''
+
 # Show the plot
 plt.show()
-
